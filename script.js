@@ -29,10 +29,10 @@ function appendDigit(digit) {
 }
 
 const display = document.getElementById("display");
-const digits = ["0","1","2","3","4","5","6","7","8","9"];
+const digits = [0,1,2,3,4,5,6,7,8,9};
 
 digits.forEach(digit => {
-    document.getElementById(digit).addEventListener("click", () => {
+    document.getElementById(digit.toString()).addEventListener("click", () => {
         appendDigit(digit);
     });
 });
