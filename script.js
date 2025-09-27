@@ -14,17 +14,11 @@ function divide(num1,num2) {
     return num1 / num2;
 }
 
-function setOp(operation){
-    if (input === "") return;
-    num1 = parseFloat(input);
-    operator = operation;
-    input = "";
-}
-
-let num1;
-let num2;
-let operator;
+let num1 = null;
+let num2 = null;
+let operator = null;
 let input = "";
+let justEvaluated = false;
 
 function operate(num1, num2, operation) {
     if (operation === "+") {
@@ -35,18 +29,40 @@ function operate(num1, num2, operation) {
         return multiply(num1, num2);
     } else if (operation === "/") {
         if (num2 === 0) {
-            return "Error"
+            return "Error";
         } else {
             return divide(num1, num2);
         }
     } else {
-        return num2;
+        return num1;
     }
 }
 
 function appendDigit(digit) {
+    if (justEvaluated) {
+        input = "";
+        justEvaluated = false;
+    }
     input += digit;
     display.value = input;
+}
+
+function setOp(operation){
+    if (input === "" && num1 === null) return;
+
+    if (num1 !== null && operator !== null && input !== "") {
+        num2 = parseFloat(input);
+        let result = operate(num1, num2, operator);
+        display.value = result;
+        num1 = result;
+        input = "";
+    } else if (input !== "") {
+        num1 = parseFloat(input);
+        input = "";
+    }
+
+    operator = operation;
+    justEvaluated = false;
 }
 
 const display = document.getElementById("display");
@@ -60,8 +76,12 @@ digits.forEach(digit => {
 
 document.getElementById("clear").addEventListener("click", () => {
     input = "";
+    num1 = null;
+    num2 = null;
+    operator = null;
+    justEvaluated = false;
     display.value = "";
-})
+});
 
 document.getElementById("add").addEventListener("click", () => setOp("+"));
 document.getElementById("subtract").addEventListener("click", () => setOp("-"));
@@ -69,9 +89,16 @@ document.getElementById("multiply").addEventListener("click", () => setOp("*"));
 document.getElementById("divide").addEventListener("click", () => setOp("/"));
 
 document.getElementById("equals").addEventListener("click", () => {
-    if (num1 === null || operator === null) return;
+    if (num1 === null || operator === null || input === "") return;
 
     num2 = parseFloat(input);
-    let result = operate(num1,num2,operator);
+    let result = operate(num1, num2, operator);
     display.value = result;
+
+    input = result.toString();
+    num1 = result;
+    num2 = null;
+    operator = null;
+
+    justEvaluated = true;
 });
